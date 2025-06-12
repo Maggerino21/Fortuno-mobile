@@ -15,7 +15,7 @@ export default function NetWorthScreen() {
       <ScrollView contentContainerStyle={styles.content}>
         {/* Greeting */}
         <Text style={styles.greeting}>
-          {getGreeting()}, <Text style={styles.username}>Dexter</Text>
+          {getGreeting()}, <Text style={styles.username}>Dexter M</Text>
         </Text>
 
         {/* Net Worth Display */}
