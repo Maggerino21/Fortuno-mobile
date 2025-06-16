@@ -1,50 +1,211 @@
+// app/(tabs)/index.tsx
 import React from 'react';
-import { StyleSheet, View, Text, ScrollView } from 'react-native';
+import { ScrollView, View, StyleSheet, Dimensions } from 'react-native';
+import { Text, Card, Surface, Chip, Divider } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LineChart } from 'react-native-chart-kit';
+
+const { width } = Dimensions.get('window');
 
 export default function NetWorthScreen() {
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return 'Good morning';
-    if (hour < 18) return 'Good afternoon';
-    return 'Good evening';
+    if (hour < 12) return 'God morgen';
+    if (hour < 18) return 'God ettermiddag';
+    return 'God kveld';
+  };
+
+  // Chart data
+  const chartData = {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun'],
+    datasets: [
+      {
+        data: [98000, 102000, 118000, 125000, 128000, 132000],
+        color: (opacity = 1) => `rgba(5, 150, 105, ${opacity})`,
+        strokeWidth: 3,
+      },
+    ],
+  };
+
+  const chartConfig = {
+    backgroundColor: '#ffffff',
+    backgroundGradientFrom: '#ffffff',
+    backgroundGradientTo: '#ffffff',
+    decimalPlaces: 0,
+    color: (opacity = 1) => `rgba(5, 150, 105, ${opacity})`,
+    labelColor: (opacity = 1) => `rgba(107, 114, 128, ${opacity})`,
+    style: {
+      borderRadius: 16,
+    },
+    propsForDots: {
+      r: '4',
+      strokeWidth: '2',
+      stroke: '#059669',
+    },
+    propsForBackgroundLines: {
+      strokeDasharray: '3,3',
+      stroke: '#e5e7eb',
+    },
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.content}>
-        {/* Greeting */}
-        <Text style={styles.greeting}>
-          {getGreeting()}, <Text style={styles.username}>Dexter M</Text>
-        </Text>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Header Card */}
+        <Card style={styles.headerCard}>
+          <Card.Content style={styles.headerContent}>
+            {/* Greeting */}
+            <Text variant="headlineSmall" style={styles.greeting}>
+              {getGreeting()}, <Text style={styles.name}>Dexter</Text>
+            </Text>
+            
+            {/* Net Worth Display */}
+            <View style={styles.netWorthContainer}>
+              <Text variant="bodyMedium" style={styles.label}>
+                Formue
+              </Text>
+              <Text style={styles.netWorthValue}>
+                132 000
+              </Text>
+              <Chip 
+                icon="trending-up" 
+                mode="flat" 
+                style={styles.changeChip}
+                textStyle={styles.changeText}
+              >
+                +4 000 (3.1%) denne måneden
+              </Chip>
+            </View>
+          </Card.Content>
+        </Card>
 
-        {/* Net Worth Display */}
-        <View style={styles.netWorthContainer}>
-          <Text style={styles.netWorthValue}>$247,650</Text>
-          <Text style={styles.changeText}>
-            ↑ +$12,450 (5.3%) this month
-          </Text>
-        </View>
+        {/* Growth Chart */}
+        <Card style={styles.chartCard}>
+          <Card.Content>
+            <Text variant="titleLarge" style={styles.sectionTitle}>
+              Utvikling
+            </Text>
+            <View style={styles.chartContainer}>
+              <LineChart
+                data={chartData}
+                width={width - 64}
+                height={220}
+                chartConfig={chartConfig}
+                bezier
+                style={styles.chart}
+                withDots={true}
+                withShadow={false}
+                withVerticalLines={false}
+                withHorizontalLines={true}
+                fromZero={false}
+              />
+            </View>
+          </Card.Content>
+        </Card>
 
-        {/* Chart Placeholder */}
-        <View style={styles.chartContainer}>
-          <Text style={styles.chartTitle}>Growth Chart</Text>
-          <View style={styles.chartPlaceholder}>
-            <Text style={styles.placeholderText}>📈 Chart will go here</Text>
-          </View>
-        </View>
+        {/* Asset Overview */}
+        <Card style={styles.overviewCard}>
+          <Card.Content>
+            <Text variant="titleLarge" style={styles.sectionTitle}>
+              Oversikt
+            </Text>
+            
+            <View style={styles.overviewRow}>
+              <Surface style={[styles.overviewItem, styles.assetItem]}>
+                <Text variant="labelMedium" style={styles.overviewLabel}>
+                  Eiendeler
+                </Text>
+                <Text variant="headlineSmall" style={styles.assetValue}>
+                  164 500
+                </Text>
+                <Text variant="bodySmall" style={styles.changeIndicator}>
+                  +2.4% fra forrige måned
+                </Text>
+              </Surface>
+
+              <Surface style={[styles.overviewItem, styles.liabilityItem]}>
+                <Text variant="labelMedium" style={styles.overviewLabel}>
+                  Gjeld
+                </Text>
+                <Text variant="headlineSmall" style={styles.liabilityValue}>
+                  32 500
+                </Text>
+                <Text variant="bodySmall" style={styles.changeIndicator}>
+                  -1.2% fra forrige måned
+                </Text>
+              </Surface>
+            </View>
+          </Card.Content>
+        </Card>
 
         {/* Quick Stats */}
-        <View style={styles.statsContainer}>
-          <View style={styles.statItem}>
-            <Text style={styles.statLabel}>Assets</Text>
-            <Text style={styles.statValue}>$285,400</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={styles.statLabel}>Liabilities</Text>
-            <Text style={styles.statValue}>$37,750</Text>
-          </View>
-        </View>
+        <Card style={styles.statsCard}>
+          <Card.Content>
+            <Text variant="titleLarge" style={styles.sectionTitle}>
+              Denne måneden
+            </Text>
+            
+            <View style={styles.statsList}>
+              <View style={styles.statItem}>
+                <View style={styles.statLeft}>
+                  <View style={[styles.statDot, { backgroundColor: '#22c55e' }]} />
+                  <View>
+                    <Text variant="bodyMedium" style={styles.statLabel}>
+                      Spart denne måneden
+                    </Text>
+                    <Text variant="bodySmall" style={styles.statSubLabel}>
+                      Automatisk sparing
+                    </Text>
+                  </View>
+                </View>
+                <Text variant="titleMedium" style={styles.statValue}>
+                  8 500 kr
+                </Text>
+              </View>
+
+              <Divider style={styles.statDivider} />
+
+              <View style={styles.statItem}>
+                <View style={styles.statLeft}>
+                  <View style={[styles.statDot, { backgroundColor: '#059669' }]} />
+                  <View>
+                    <Text variant="bodyMedium" style={styles.statLabel}>
+                      Beste investering
+                    </Text>
+                    <Text variant="bodySmall" style={styles.statSubLabel}>
+                      Tesla aksjer
+                    </Text>
+                  </View>
+                </View>
+                <Text variant="titleMedium" style={[styles.statValue, { color: '#22c55e' }]}>
+                  +12.3%
+                </Text>
+              </View>
+
+              <Divider style={styles.statDivider} />
+
+              <View style={styles.statItem}>
+                <View style={styles.statLeft}>
+                  <View style={[styles.statDot, { backgroundColor: '#0ea5e9' }]} />
+                  <View>
+                    <Text variant="bodyMedium" style={styles.statLabel}>
+                      Månedsbudsjett
+                    </Text>
+                    <Text variant="bodySmall" style={styles.statSubLabel}>
+                      73% brukt
+                    </Text>
+                  </View>
+                </View>
+                <Text variant="titleMedium" style={styles.statValue}>
+                  22 100 kr
+                </Text>
+              </View>
+            </View>
+          </Card.Content>
+        </Card>
+
+        {/* Bottom spacing for tab bar */}
+        <View style={{ height: 100 }} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -53,94 +214,159 @@ export default function NetWorthScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8fffe',
+    backgroundColor: '#f0f9f4',
   },
-  content: {
-    padding: 20,
+  headerCard: {
+    margin: 16,
+    marginBottom: 12,
+    backgroundColor: '#e8f5e8',
+    borderRadius: 24,
+    elevation: 0,
+    borderWidth: 2,
+    borderColor: '#d1fae5',
+  },
+  headerContent: {
+    paddingVertical: 32,
+    paddingHorizontal: 24,
   },
   greeting: {
-    fontSize: 24,
-    fontWeight: '500',
+    textAlign: 'center',
     color: '#1f2937',
     marginBottom: 32,
-    textAlign: 'center',
   },
-  username: {
-    fontWeight: '700',
+  name: {
     color: '#059669',
+    fontWeight: 'bold',
   },
   netWorthContainer: {
     alignItems: 'center',
-    marginBottom: 40,
-    padding: 24,
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+  },
+  label: {
+    color: '#6b7280',
+    marginBottom: 8,
+    textAlign: 'center',
   },
   netWorthValue: {
-    fontSize: 48,
+    fontSize: 56,
     fontWeight: 'bold',
-    color: '#059669',
-    marginBottom: 8,
-  },
-  changeText: {
-    fontSize: 18,
-    color: '#22c55e',
-    fontWeight: '600',
-  },
-  chartContainer: {
-    marginBottom: 32,
-  },
-  chartTitle: {
-    fontSize: 20,
-    fontWeight: '600',
     color: '#1f2937',
     marginBottom: 16,
     textAlign: 'center',
   },
-  chartPlaceholder: {
-    height: 200,
+  changeChip: {
+    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(34, 197, 94, 0.2)',
+  },
+  changeText: {
+    color: '#22c55e',
+    fontWeight: '600',
+  },
+  chartCard: {
+    margin: 16,
+    marginVertical: 8,
     backgroundColor: '#ffffff',
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#e5e7eb',
-    borderStyle: 'dashed',
-  },
-  placeholderText: {
-    fontSize: 16,
-    color: '#6b7280',
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  statItem: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-    padding: 20,
-    borderRadius: 12,
-    marginHorizontal: 4,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
+    borderRadius: 20,
     elevation: 2,
   },
-  statLabel: {
-    fontSize: 14,
+  sectionTitle: {
+    color: '#1f2937',
+    marginBottom: 16,
+    fontWeight: '600',
+  },
+  chartContainer: {
+    alignItems: 'center',
+    overflow: 'hidden',
+    borderRadius: 16,
+  },
+  chart: {
+    borderRadius: 16,
+  },
+  overviewCard: {
+    margin: 16,
+    marginVertical: 8,
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    elevation: 2,
+  },
+  overviewRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  overviewItem: {
+    flex: 1,
+    padding: 20,
+    borderRadius: 16,
+    alignItems: 'center',
+  },
+  assetItem: {
+    backgroundColor: 'rgba(5, 150, 105, 0.05)',
+    borderWidth: 1,
+    borderColor: 'rgba(5, 150, 105, 0.1)',
+  },
+  liabilityItem: {
+    backgroundColor: 'rgba(239, 68, 68, 0.05)',
+    borderWidth: 1,
+    borderColor: 'rgba(239, 68, 68, 0.1)',
+  },
+  overviewLabel: {
     color: '#6b7280',
+    marginBottom: 8,
+  },
+  assetValue: {
+    color: '#059669',
+    fontWeight: 'bold',
     marginBottom: 4,
   },
-  statValue: {
-    fontSize: 18,
+  liabilityValue: {
+    color: '#ef4444',
     fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  changeIndicator: {
+    color: '#6b7280',
+    textAlign: 'center',
+  },
+  statsCard: {
+    margin: 16,
+    marginVertical: 8,
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    elevation: 2,
+  },
+  statsList: {
+    gap: 4,
+  },
+  statItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 16,
+  },
+  statLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  statDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginRight: 16,
+  },
+  statLabel: {
     color: '#1f2937',
+    fontWeight: '500',
+  },
+  statSubLabel: {
+    color: '#6b7280',
+    marginTop: 2,
+  },
+  statValue: {
+    color: '#1f2937',
+    fontWeight: '600',
+  },
+  statDivider: {
+    backgroundColor: '#f3f4f6',
   },
 });
